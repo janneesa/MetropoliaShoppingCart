@@ -43,9 +43,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    withCredentials([string(credentialsId: 'SONAR-TOKEN', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'SONAR-TOKEN', variable: 'SONAR-TOKEN')]) {
                         bat """
-                            sonar-scanner ^
+                            C:\\SonarScanner\\sonar-scanner-7.0.2.4839-windows-x64\\bin\\sonar-scanner ^
                             -Dsonar.projectKey=metropolia-shopping-cart-sonar ^
                             -Dsonar.sources=src ^
                             -Dsonar.projectName=MetropoliaShoppingCart ^
