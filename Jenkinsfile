@@ -5,6 +5,8 @@ pipeline {
         DOCKERHUB_CREDENTIALS_ID = 'docker-hub-credentials'
         DOCKERHUB_REPO = 'janneesa/metropoliashoppingcart'
         DOCKER_IMAGE_TAG = 'latest'
+        SONARQUBE_SERVER = 'SonarQubeServer'  // The name of the SonarQube server configured in Jenkins
+        // SONAR_TOKEN = '' // Store the token securely
     }
 
     stages {
@@ -36,6 +38,23 @@ pipeline {
             steps {
                 // Publish Jacoco coverage report
                 jacoco()
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQubeServer') {
+                    withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                        bat """
+                            sonar-scanner ^
+                            -Dsonar.projectKey=metropolia-shopping-cart-sonar ^
+                            -Dsonar.sources=src ^
+                            -Dsonar.projectName=MetropoliaShoppingCart ^
+                            -Dsonar.host.url=http://localhost:9000 ^
+                            -Dsonar.login=%SONAR_TOKEN% ^
+                            -Dsonar.java.binaries=target/classes
+                        """
+                    }
+                }
             }
         }
         stage('Build Docker Image') {
